@@ -172,7 +172,8 @@ code {
   margin: 0 auto;
   height: 100vh;
   background-image: url("C:\FE_CK\fe-final-appchat\src\images\2221173.jpg");
-  background-size: cover;
+  background-position-x: -2px;
+  background-position-y: -3px;
   background-repeat: no-repeat;
 }
 /* Login site end */
@@ -308,6 +309,166 @@ code {
 
 
 /* Login register start */
+.register_link{
+  display: inline-flex;
+  width: 300px;
+  margin-left: 50px;
+}
+
+.register_link p{
+  font-size: 16px;
+}
+
+.register_link Link{
+  font-size: 16px;
+  color: #653acf;
+}
+
+
+/* Login register end */
+
+/* Register site start*/
+.register_site{
+  margin: 0 auto;
+  height: 100vh;
+  background-image: url("C:\FE_CK\fe-final-appchat\src\images\2225261.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+/* Register site end*/
+
+
+
+/* Register content start */
+.register_body{
+  margin-left: 40vw;
+  width: 400px;
+  height: 700px;
+  border-radius: 10px;
+  background-color: #ffe4ee;
+  /* margin: 0 auto; */
+  margin-top: 100px;
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.register_body .register_title{
+  font-family: serif;
+  margin-top: 70px;
+  color: #653acf;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 45px;
+  font-weight: bold;
+}
+
+.register_body .register_sub{
+  font-family: serif;
+  margin-top: -40px;
+  margin-bottom: 40px;
+  font-size: 18px;
+  text-align: center;
+  color: #653acf;
+}
+
+.register_body label{
+  /* padding-left: -10px; */
+  width: 250px;
+  font-size: 20px;
+  font-weight: 500;
+  margin-left: 45px;
+}
+
+.register_body #re_confirm_password{
+  margin-top: -20px;
+}
+
+.register_body input{
+  padding-left: 5px;
+  font-weight: bold;
+  width: 300px;
+  height: 25px;
+  border-radius: 10px;
+  margin: 10px auto;
+}
+
+.register_body .fa-solid{
+  font-size: 20px;
+  width: 25px;
+  height: 25px;
+  position: relative;
+  left: 325px;
+  top: -35px;
+  cursor: pointer;
+}
+
+.register_body .register_button{
+  margin: 30px auto;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  display: block;
+  width: 250px;
+  height: 30px;
+  /* width: 100%; */
+  margin-left: 50%;
+  transform: translateX(-50%);
+  padding: 5px;
+  /* background: linear-gradient(to right, #00c10c 0%, #fff200 50%, #00c10c 100%); */
+  background: linear-gradient(to right, #efb5a3 0%, #f84785  50%, #efb5a3 100%);
+  background-size: 300%, 1px;
+  border: none;
+  border-radius: 8px;
+  color: #0d1137 ;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all .3s linear;
+  cursor: pointer;
+}
+
+.register_body .register_button:hover{
+  /* background: linear-gradient(to left, #00c10c 0%, #fff200 50%, #00c10c 100%) right; */
+  background: linear-gradient(to left, #efb5a3 0%, #f84785  50%, #efb5a3 100%) right;
+  background-size: 300%, 1px;
+}
+
+.register_body p{
+  margin: 0 auto;
+  font-size: 20px;
+}
+
+.register_body .register-link{
+  margin: 0 auto;
+}
+/* Register content end */
+
+/* Register term start */
+.register_term{
+  display: inline-flex;
+  width: 350px;
+  height: 15px;
+  margin-top: -20px;
+  margin-bottom: 20px;
+}
+
+.register_term #agree_term{
+  margin-left: 50px;
+  width: 15px;
+  height: 15px;
+  margin-top: 5px;
+}
+
+
+.register_term label{
+  font-size: 18px;
+  font-weight: 400 ;
+  height: 30px;
+  width: 300px;
+  margin-left: 10px;
+}
+/* Register term end */
+
+/* Register login start */
 .login_link{
   display: inline-flex;
   width: 300px;
@@ -324,4 +485,4 @@ code {
 }
 
 
-/* Login register end */
+/* Register login end */
