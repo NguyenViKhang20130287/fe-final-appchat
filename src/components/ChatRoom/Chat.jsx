@@ -1,9 +1,44 @@
 import React from "react";
-import { FaSearch, FaPhone, FaVideo, FaArrowCircleRight } from "react-icons/fa";
+import { FaPhone, FaVideo, FaArrowCircleRight } from "react-icons/fa";
 import Messages from "./Messages";
 import Input from "./Input";
+import { useNavigate } from "react-router-dom";
+
 
 export default function Chat() {
+  const navigate = useNavigate();
+  const signout = () => {
+    // const isValid = setValidationLoginForm();
+    // if (!isValid) {
+    //   return;
+    // } else {
+    const payload = {
+      action: "onchat",
+      data: {
+        event: "LOGOUT"
+      }
+    }
+
+    //connect to api
+    const socket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
+
+    socket.onopen = () => {
+      console.log("WebSocket connection established");
+
+      socket.send(JSON.stringify(payload));
+    };
+
+    socket.onmessage = (event) => {
+      console.log("Received message:", event.data);
+      //check error status
+    };
+
+    socket.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+    // }
+    navigate("/signout")
+  };
   return (
     <div className="chat">
       <div className="chatInfo">
@@ -28,7 +63,7 @@ export default function Chat() {
               color: "#f84785",
             }}
           />
-          <FaArrowCircleRight
+          <FaArrowCircleRight onClick={signout}
             style={{
               marginRight: 0,
               cursor: "pointer",
