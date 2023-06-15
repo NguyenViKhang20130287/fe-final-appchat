@@ -42,7 +42,7 @@ const LoginForm = () => {
     if (status === true) {
       check.messages = "Tài khoản hoặc mật khẩu không đúng.";
     } else if (status === false) {
-      navigate("/");
+      navigate("/chatroom");
     }
 
     setValidationLogin(check);

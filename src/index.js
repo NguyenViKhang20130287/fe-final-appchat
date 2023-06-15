@@ -10,6 +10,8 @@ import {
 } from "react-router-dom";
 import Login from './pages/login';
 import Register from './pages/register';
+import ChatRoom from './pages/ChatRoom';
+import Signout from './pages/signout';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -20,6 +22,8 @@ root.render(
         <Route path="/" element={<App />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/chatroom" element={<ChatRoom />} />
+        <Route path="/signout" element={<Signout />} />
       </Routes>
       {/* </BrowserRouter> */}
     </BrowserRouter>
