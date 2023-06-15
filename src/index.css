@@ -1,3 +1,5 @@
+/* @import '@sweetalert2/themes/dark/dark.scss'; */
+
 /* Body start */
 body {
   margin: 0;
@@ -227,6 +229,28 @@ code {
   margin: 10px auto;
 }
 
+.login_body p.error_login{
+  font-size: 15px;
+  color: red;
+  text-align: center;
+}
+
+.login_body p.error_login_pass{
+  font-size: 15px;
+  color: red;
+  text-align: center;
+  margin-top: -20px;
+  margin-bottom: 25px;
+}
+
+.login_body p.error_status{
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: red;
+  text-align: center;
+}
+
 .login_body .fa-solid{
   font-size: 20px;
   width: 25px;
@@ -235,6 +259,12 @@ code {
   left: 325px;
   top: -35px;
   cursor: pointer;
+}
+
+.login_body p.error_login{
+  font-size: 15px;
+  color: red;
+  text-align: center;
 }
 
 .login_body .login_button{
@@ -373,6 +403,7 @@ code {
 
 .register_body label{
   /* padding-left: -10px; */
+  margin-top: 10px;
   width: 250px;
   font-size: 20px;
   font-weight: 500;
@@ -391,6 +422,38 @@ code {
   border-radius: 10px;
   margin: 10px auto;
 }
+
+.register_body p.error{
+  position: relative;
+  text-align: center;
+  font-size: 15px;
+  color: red;
+}
+
+.register_body p.error_pass{
+  margin-top: -25px;
+  margin-bottom: 20px;
+  position: relative;
+  text-align: center;
+  font-size: 15px;
+  color: red;
+}
+
+.register_body p.error_term{
+  margin-top: -10px;
+  /* margin-bottom: 20px; */
+  position: relative;
+  text-align: center;
+  font-size: 15px;
+  color: red;
+}
+
+
+
+/* input.input-error,
+select.input-error{
+  border: 2px solid red;
+} */
 
 .register_body .fa-solid{
   font-size: 20px;
@@ -455,9 +518,8 @@ code {
   margin-left: 50px;
   width: 15px;
   height: 15px;
-  margin-top: 5px;
+  margin-top: 15px;
 }
-
 
 .register_term label{
   font-size: 18px;
