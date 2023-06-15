@@ -9,8 +9,8 @@ function App() {
   // return <Register />;
   return (
     <div className="App">
-      {/* <Home /> */}
-      <ChatRoom />
+      <Home />
+      {/* <ChatRoom /> */}
     </div>
   );
 }
