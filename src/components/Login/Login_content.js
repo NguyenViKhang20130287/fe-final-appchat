@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 // import { createAsyncThunk } from "@reduxjs/toolkit";
 import { isEmpty } from "validator";
 import { useNavigate } from "react-router-dom";
+import socket from "../../cnn/ConnectWebSocket";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -49,6 +50,31 @@ const LoginForm = () => {
     if (Object.keys(check).length > 0) return false;
     return true;
   };
+  //   ConnectWebSocket(handleSocketMessage);
+
+  //   return () => {
+  //     closeWebSocket();
+  //   };
+  // }, []);
+  // const handleSocketMessage = (message) => {
+  //   // Xử lý dữ liệu nhận được từ WebSocket
+  //   console.log("Received message:", message);
+  // };
+  // const login = () => {
+  //   const loginData = {
+  //     action: "onchat",
+  //     data: {
+  //       event: "LOGIN",
+  //       data: {
+  //         user: username,
+  //         pass: password,
+  //       },
+  //     },
+  //   };
+  //   sendWebSocketMessage(loginData);
+  //   setValidationLoginForm();
+  // navigate("/chatroom");
+  // };
 
   const login = () => {
     const isValid = setValidationLoginForm();
@@ -67,26 +93,25 @@ const LoginForm = () => {
       };
 
       //connect to api
-      const socket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
+      // const socket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
 
-      socket.onopen = () => {
-        console.log("WebSocket connection established");
+      // socket.onopen = () => {
+      //   console.log("WebSocket connection established");
 
-        socket.send(JSON.stringify(payload));
-      };
+      socket.send(JSON.stringify(payload));
+      // };
+      // ConnectAPI(payload);
 
       socket.onmessage = (event) => {
+        const response = JSON.parse(event.data);
         console.log("Received message:", event.data);
+        console.log(response);
         //check error status
         let message = JSON.stringify(event.data);
         status = message.includes("error");
         // console.log(status)
         // console.log(message)
         setValidationLoginForm();
-      };
-
-      socket.onclose = () => {
-        console.log("WebSocket connection closed");
       };
     }
   };

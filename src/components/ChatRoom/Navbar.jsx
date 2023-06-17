@@ -1,20 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import CreateRoom from "./CreateRoom";
+import io from "socket.io-client";
 
 export default function Navbar() {
-  // const [isOpenPopup, setIsOpenPopup] = useState(false);
+  const [isOpenPopup, setIsOpenPopup] = useState(false);
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   return (
     <div className="navbar">
-      <div className="logo">ChatRapid</div>
-      <button className="createRoom">
+      <div className="logo">
+        ChatRapid - <span className="username">{username}</span>
+      </div>
+      <button className="createRoom" onClick={setIsOpenPopup.bind(this, true)}>
         <FaPlus />
       </button>
-      {/* <button className="addUser" onClick={setIsOpenPopup.bind(this, true)}>
-        <FaPlus />
-      </button>
-      {isOpenPopup && <CreateRoom setIsOpenPopup={setIsOpenPopup} />} */}
+      {isOpenPopup && <CreateRoom setIsOpenPopup={setIsOpenPopup} />}
     </div>
   );
 }
