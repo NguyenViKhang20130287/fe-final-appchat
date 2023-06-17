@@ -12,21 +12,25 @@ import Login from './pages/login';
 import Register from './pages/register';
 import ChatRoom from './pages/ChatRoom';
 import Signout from './pages/signout';
+import { Provider } from 'react-redux';
+import store from './app/store';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* <BrowserRouter> */}
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/chatroom" element={<ChatRoom />} />
-        <Route path="/signout" element={<Signout />} />
-      </Routes>
-      {/* </BrowserRouter> */}
-    </BrowserRouter>
+    <Provider store={store}>
+      {/* <BrowserRouter> */}
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/chatroom" element={<ChatRoom />} />
+          <Route path="/signout" element={<Signout />} />
+        </Routes>
+        {/* </BrowserRouter> */}
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>
 );
 

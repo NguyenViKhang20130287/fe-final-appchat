@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchListUser, fetchMesPeople, fetchMesRoom, joinRoom } from "../../app/thunk";
+import Swal from 'sweetalert2';
+import socket from "../../cnn/ConnectWebSocket";
 
-export default function Search() {
+const Search = () => {
+
   return (
     <div className="search">
       <div className="searchForm">
@@ -12,4 +17,7 @@ export default function Search() {
       </div>
     </div>
   );
-}
+};
+
+export default Search;
+

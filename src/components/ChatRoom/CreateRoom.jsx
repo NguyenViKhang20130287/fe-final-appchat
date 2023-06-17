@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
 import socket from "../../cnn/ConnectWebSocket";
+import { useDispatch, useSelector } from 'react-redux';
+import Swal from 'sweetalert2'
+import { fetchListUser } from "../../app/thunk";
+// import { createRoom } from "./Api_handle.js";
+
+
 
 export default function CreateRoom({ setIsOpenPopup }) {
+  const dispatch = useDispatch();
   const [roomName, setRoomName] = useState("");
-  // const [nameRoom, setRoomName] = useState("");
+  const closePopup = document.getElementById("close_popup");
 
   const handleCreateRoom = (e) => {
     e.preventDefault();
@@ -16,10 +23,7 @@ export default function CreateRoom({ setIsOpenPopup }) {
         },
       },
     };
-    // const socket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
 
-    // socket.onopen = () => {
-    //   console.log("WebSocket connection established");
 
     socket.send(JSON.stringify(request));
     // };
@@ -27,17 +31,30 @@ export default function CreateRoom({ setIsOpenPopup }) {
       const message = JSON.parse(event.data);
       console.log("Nhận được tin nhắn từ server:", message);
 
-      // Kiểm tra phản hồi từ server
       if (message.status === "success") {
-        console.log("Phòng chat đã được tạo thành công!");
-        console.log("Thông tin phòng chat:", message.room);
-        setIsOpenPopup.bind(this, false);
-        // Tiếp tục xử lý với phòng chat mới được tạo
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Tạo phòng thành công.',
+          showConfirmButton: false,
+          timer: 1500
+        })
+        setRoomName("");
+        dispatch(fetchListUser(socket))
       } else {
-        console.log("Không thể tạo phòng chat:", message.error);
-        // Xử lý lỗi nếu cần thiết
+        Swal.fire({
+          icon: 'error',
+          title: 'Không thể tạo phòng!',
+          text: 'Phòng đã tồn tại.',
+
+        })
       }
     };
+    // createRoom()
+  };
+
+  const handleChange = (event) => {
+    setRoomName(event.target.value);
   };
 
   return (
@@ -50,10 +67,12 @@ export default function CreateRoom({ setIsOpenPopup }) {
             type="text"
             placeholder="Nhập email..."
             value={roomName}
-            onChange={(e) => setRoomName(e.target.value)}
+            // onChange={(e) => setRoomName(e.target.value)}
+            onChange={handleChange}
           />
           <div className="btns">
             <button
+              id="close_popup"
               className="closeBtn"
               onClick={setIsOpenPopup.bind(this, false)}
             >
@@ -68,3 +87,4 @@ export default function CreateRoom({ setIsOpenPopup }) {
     </div>
   );
 }
+

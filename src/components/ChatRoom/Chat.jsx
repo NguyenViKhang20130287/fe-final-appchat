@@ -3,6 +3,7 @@ import { FaPhone, FaVideo, FaArrowCircleRight } from "react-icons/fa";
 import Messages from "./Messages";
 import Input from "./Input";
 import { useNavigate } from "react-router-dom";
+import socket from "../../cnn/ConnectWebSocket";
 
 
 export default function Chat() {
@@ -20,13 +21,13 @@ export default function Chat() {
     }
 
     //connect to api
-    const socket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
+    // const socket = new WebSocket("ws://140.238.54.136:8080/chat/chat");
 
-    socket.onopen = () => {
-      console.log("WebSocket connection established");
+    // socket.onopen = () => {
+    // console.log("WebSocket connection established");
 
-      socket.send(JSON.stringify(payload));
-    };
+    socket.send(JSON.stringify(payload));
+    // };
 
     socket.onmessage = (event) => {
       console.log("Received message:", event.data);
