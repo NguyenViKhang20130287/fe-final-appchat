@@ -6,6 +6,7 @@ import axios from "axios";
 import { isEmpty } from "validator";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2/dist/sweetalert2.js";
+// import socket from "../../cnn/ConnectWebSocket";
 
 const RegisterForm = () => {
   const [username, setUsername] = useState("");
@@ -80,12 +81,12 @@ const RegisterForm = () => {
       };
 
       socket.onmessage = (event) => {
-        console.log("Received message:", event);
+        console.log("Received message:", event.data);
       };
 
-      socket.onclose = () => {
-        console.log("WebSocket connection closed");
-      };
+      // socket.onclose = () => {
+      //   console.log("WebSocket connection closed");
+      // };
       console.log(username, password);
     }
     //display success message
