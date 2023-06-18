@@ -43,18 +43,34 @@ const Search = () => {
     console.log("checked", isChecked);
   };
 
+  const handleValueChange = () => {};
+
   const handleSearch = (e) => {
     e.preventDefault();
-    const request = {
-      action: "onchat",
-      data: {
-        event: "JOIN_ROOM",
+    if (isChecked === true) {
+      const request = {
+        action: "onchat",
         data: {
-          name: roomName,
+          event: "JOIN_ROOM",
+          data: {
+            name: roomName,
+          },
         },
-      },
-    };
-    socket.send(JSON.stringify(request));
+      };
+      socket.send(JSON.stringify(request));
+    } else {
+      const requestCheckUser = {
+        action: "onchat",
+        data: {
+          event: "CHECK_USER",
+          data: {
+            user: roomName,
+          },
+        },
+      };
+      socket.send(JSON.stringify(requestCheckUser));
+    }
+
     valueSearch = roomName;
   };
 

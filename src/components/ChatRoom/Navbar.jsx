@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import CreateRoom from "./CreateRoom";
-import io from "socket.io-client";
+import { usernameLogin } from "../Login/Login_content";
 
 export default function Navbar() {
   const [isOpenPopup, setIsOpenPopup] = useState(false);
@@ -12,7 +12,7 @@ export default function Navbar() {
   return (
     <div className="navbar">
       <div className="logo">
-        ChatRapid - <span className="username">{username}</span>
+        ChatRapid - <span className="username">{usernameLogin}</span>
       </div>
       <button className="createRoom" onClick={setIsOpenPopup.bind(this, true)}>
         <FaPlus />
