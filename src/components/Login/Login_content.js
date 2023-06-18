@@ -8,6 +8,8 @@ import { isEmpty } from "validator";
 import { useNavigate } from "react-router-dom";
 import socket from "../../cnn/ConnectWebSocket";
 
+export var usernameLogin = "";
+
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -101,7 +103,7 @@ const LoginForm = () => {
       socket.send(JSON.stringify(payload));
       // };
       // ConnectAPI(payload);
-
+      usernameLogin = username;
       socket.onmessage = (event) => {
         const response = JSON.parse(event.data);
         console.log("Received message:", event.data);
