@@ -10,7 +10,7 @@ const CreateRoom = ({ scrollRef }) => {
   const [newListUser, setNewListUser] = useState([]);
   const [isLogined, setIsLogged] = useState(false);
 
-  dispatch(fetchListUser(socket));
+  // dispatch(fetchListUser(socket));
 
   //   socket.onmessage = async (event) => {
   //     await dispatch(fetchListUser(socket));
@@ -50,9 +50,9 @@ const CreateRoom = ({ scrollRef }) => {
             }`}
           >
             <span className="name">{item.name}</span>
-            <div className="numMess">
+            {/* <div className="numMess">
               <span></span>
-            </div>
+            </div> */}
           </div>
         );
       })}

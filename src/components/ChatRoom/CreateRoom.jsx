@@ -21,31 +21,15 @@ export default function CreateRoom({ setIsOpenPopup }) {
       },
     };
 
-    socket.send(JSON.stringify(request));
-    // };
-    socket.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log("Nhận được tin nhắn từ server:", message);
-
-      if (message.status === "success") {
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: "Tạo phòng thành công.",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        setRoomName("");
-        dispatch(fetchListUser(socket));
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Không thể tạo phòng!",
-          text: "Phòng đã tồn tại.",
-        });
-      }
+    const requestGetListRoom = {
+      action: "onchat",
+      data: {
+        event: "GET_USER_LIST",
+      },
     };
-    // createRoom()
+
+    socket.send(JSON.stringify(request));
+    socket.send(JSON.stringify(requestGetListRoom));
   };
 
   const handleChange = (event) => {

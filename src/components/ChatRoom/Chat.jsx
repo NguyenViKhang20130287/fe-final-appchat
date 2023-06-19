@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { FaPhone, FaVideo, FaArrowCircleRight } from "react-icons/fa";
 import { FaPaperPlane, FaFile, FaRegSmile } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
 import socket from "../../cnn/ConnectWebSocket";
 import AVATAR from "../../images/avatar.png";
 import { usernameLogin } from "../Login/Login_content";
@@ -13,9 +13,16 @@ import Swal from "sweetalert2";
 
 export default function Chat() {
   const [roomName, setRoomName] = useState("");
+  const [peopleName, setPeopleName] = useState("");
   const [messagesInfo, setMessagesInfo] = useState([]);
   const [message, setMessage] = useState("");
+  const [userRoom, setUserRoom] = useState([]);
+  const [people, setPeople] = useState([]);
+  const [isCheckType, setIsCheckType] = useState("");
   const navigate = useNavigate();
+
+  var listUser = [];
+  var type = 0;
 
   const signout = () => {
     // const isValid = setValidationLoginForm();
@@ -50,9 +57,9 @@ export default function Chat() {
           //check error status
         };
 
-        socket.onclose = () => {
-          console.log("WebSocket connection closed");
-        };
+        // socket.onclose = () => {
+        //   console.log("WebSocket connection closed");
+        // };
         // }
         navigate("/signout");
         Swal.fire("Đăng xuất thành công!", "", "success");
@@ -81,10 +88,27 @@ export default function Chat() {
         },
       },
     };
+    const requestSendMessToUser = {
+      action: "onchat",
+      data: {
+        event: "SEND_CHAT",
+        data: {
+          type: "people",
+          to: peopleName,
+          mes: message,
+        },
+      },
+    };
 
-    socket.send(JSON.stringify(requestSendMessToRoom));
-    setMessage("");
-    getMess();
+    if (isCheckType === 1) {
+      socket.send(JSON.stringify(requestSendMessToRoom));
+      setMessage("");
+      getMess();
+    } else if (isCheckType === 0) {
+      socket.send(JSON.stringify(requestSendMessToUser));
+      setMessage("");
+      getMessPeople();
+    }
   };
   // checkUer("nguyenvikhang");
   useEffect(() => {
@@ -93,32 +117,66 @@ export default function Chat() {
       console.log("Nhận được tin nhắn từ server Chat:", message);
       //
       if (message.event === "JOIN_ROOM") {
+        setIsCheckType(1);
+
         if (message.status === "success") {
           setRoomName(message.data.name);
           setMessagesInfo(message.data.chatData.reverse());
           // console.log(messagesInfo);
-        } else {
-          console.log(message.error);
+        } else if (message.status === "error") {
+          setRoomName("");
+          setMessagesInfo([]);
+          alert("Phòng không tồn tại !!!");
         }
       }
       //
-      if (message.event === "CHECK_USER") {
+      if (message.event === "GET_PEOPLE_CHAT_MES") {
+        console.log("Nhận được tin nhắn từ server Chat:", message);
+        setIsCheckType(0);
+
         if (message.status === "success") {
-          console.log("CHECKUSER: ", message);
+          if (message.data.length > 0) {
+            console.log("mess people: ", message.data);
+            setPeople(message.data.reverse());
+            setRoomName(message.data[0].to);
+            setPeopleName(message.data[0].to);
+            console.log(people.length);
+          } else if (message.data.length === 0) {
+            setRoomName("");
+            setPeople([]);
+            alert("Không tìm thấy người dùng !!!");
+          }
+
+          // people.forEach((p, index) => {
+          //   console.log("people: ", p);
+          //   setIsUser(people.type);
+          //   console.log("ispeople: ", isUser);
+          // });
         }
       }
 
       //
     };
+    console.log("type get: ", type);
   }, []);
+
+  //
   useEffect(() => {
     scrollEnd();
   }, [messagesInfo]);
+
+  useEffect(() => {
+    scrollEnd();
+  }, [people]);
+
+  //
   const scrollRef = useRef(null);
   const scrollEnd = () => {
     scrollRef.current.scrollTop =
       scrollRef.current.scrollHeight - scrollRef.current.clientHeight;
   };
+
+  //
   const getMess = () => {
     const request = {
       action: "onchat",
@@ -137,6 +195,27 @@ export default function Chat() {
       setMessagesInfo(message.data.chatData.reverse());
     };
   };
+
+  //
+  const getMessPeople = () => {
+    const requestSendMessToUser = {
+      action: "onchat",
+      data: {
+        event: "GET_PEOPLE_CHAT_MES",
+        data: {
+          name: peopleName,
+          page: 1,
+        },
+      },
+    };
+    socket.send(JSON.stringify(requestSendMessToUser));
+    socket.onmessage = (event) => {
+      const messageP = JSON.parse(event.data);
+
+      // const message = JSON.parse(event.data);
+      setPeople(messageP.data.reverse());
+    };
+  };
   return (
     <div className="chat">
       <div className="chatInfo">
@@ -145,7 +224,7 @@ export default function Chat() {
         </div>
         <div className="functions">
           {/* <FaSearch style={{ marginRight: 25, cursor: "pointer" }} /> */}
-          <FaPhone
+          {/* <FaPhone
             style={{
               marginRight: 25,
               cursor: "pointer",
@@ -160,7 +239,7 @@ export default function Chat() {
               fontSize: "18px",
               color: "#f84785",
             }}
-          />
+          /> */}
           <FaArrowCircleRight
             onClick={signout}
             style={{
@@ -173,80 +252,156 @@ export default function Chat() {
         </div>
       </div>
       <div className="messages" ref={scrollRef}>
-        {messagesInfo.map((value, index) => {
-          return (
-            <div key={index}>
-              {value.name === usernameLogin ? (
-                <div className="message owner">
-                  <div className="mainMess">
-                    <div className="messageInfo">
-                      <div className="avatar">
-                        <img
-                          src={AVATAR}
-                          alt=""
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                        />
+        {isCheckType === 1 &&
+          messagesInfo.map((value, index) => {
+            return (
+              <div key={index}>
+                {value.name === usernameLogin ? (
+                  <div className="message owner">
+                    <div className="mainMess">
+                      <div className="messageInfo">
+                        <div className="avatar">
+                          <img
+                            src={AVATAR}
+                            alt=""
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="messageContent">
+                        <div className="content">
+                          <p>{value.mes}</p>
+                        </div>
                       </div>
                     </div>
-                    <div className="messageContent">
-                      <div className="content">
-                        <p>{value.mes}</p>
-                      </div>
+                    <div
+                      className="nameAndTime"
+                      style={{
+                        fontSize: "12px",
+                        display: "flex",
+                        flexDirection: "row-reverse",
+                      }}
+                    >
+                      <span className="time" style={{}}>
+                        {value.createAt}
+                      </span>
+                      <span> - </span>
+                      <span className="name">{value.name}</span>
                     </div>
                   </div>
-                  <div
-                    className="nameAndTime"
-                    style={{
-                      fontSize: "12px",
-                      display: "flex",
-                      flexDirection: "row-reverse",
-                    }}
-                  >
-                    <span className="time" style={{}}>
-                      {value.createAt}
-                    </span>
-                    <span> - </span>
-                    <span className="name">{value.name}</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="message">
-                  <div className="mainMess">
-                    <div className="messageInfo">
-                      <div className="avatar">
-                        <img
-                          src={AVATAR}
-                          alt=""
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                        />
+                ) : (
+                  <div className="message">
+                    <div className="mainMess">
+                      <div className="messageInfo">
+                        <div className="avatar">
+                          <img
+                            src={AVATAR}
+                            alt=""
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="messageContent">
+                        <div className="content">
+                          <p>{value.mes}</p>
+                        </div>
                       </div>
                     </div>
-                    <div className="messageContent">
-                      <div className="content">
-                        <p>{value.mes}</p>
-                      </div>
+                    <div className="nameAndTime" style={{ fontSize: "12px" }}>
+                      <span className="name">{value.name}</span>
+                      <span> - </span>
+                      <span className="time" style={{}}>
+                        {value.createAt}
+                      </span>
                     </div>
                   </div>
-                  <div className="nameAndTime" style={{ fontSize: "12px" }}>
-                    <span className="name">{value.name}</span>
-                    <span> - </span>
-                    <span className="time" style={{}}>
-                      {value.createAt}
-                    </span>
+                )}
+              </div>
+            );
+          })}
+        {isCheckType === 0 &&
+          people.map((value, index1) => {
+            return (
+              <div key={index1}>
+                {value.name === usernameLogin ? (
+                  <div className="message owner">
+                    <div className="mainMess">
+                      <div className="messageInfo">
+                        <div className="avatar">
+                          <img
+                            src={AVATAR}
+                            alt=""
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="messageContent">
+                        <div className="content">
+                          <p>{value.mes}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className="nameAndTime"
+                      style={{
+                        fontSize: "12px",
+                        display: "flex",
+                        flexDirection: "row-reverse",
+                      }}
+                    >
+                      <span className="time" style={{}}>
+                        {value.createAt}
+                      </span>
+                      <span> - </span>
+                      <span className="name">{value.name}</span>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
+                ) : (
+                  <div className="message">
+                    <div className="mainMess">
+                      <div className="messageInfo">
+                        <div className="avatar">
+                          <img
+                            src={AVATAR}
+                            alt=""
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="messageContent">
+                        <div className="content">
+                          <p>{value.mes}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="nameAndTime" style={{ fontSize: "12px" }}>
+                      <span className="name">{value.name}</span>
+                      <span> - </span>
+                      <span className="time" style={{}}>
+                        {value.createAt}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
       </div>
 
       <div className="inputMess">

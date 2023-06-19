@@ -21,6 +21,12 @@ const LoginForm = () => {
   //link to another page
   const navigate = useNavigate();
 
+  useEffect(() => {
+    socket.onopen = () => {
+      console.log("connect");
+    };
+  }, []);
+
   //validate login form
   const setValidationLoginForm = () => {
     const check = {};

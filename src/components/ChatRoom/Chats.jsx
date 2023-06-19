@@ -1,89 +1,63 @@
 import React, { useEffect, useState, useRef } from "react";
-import * as ReactDOM from 'react-dom/client';
+import * as ReactDOM from "react-dom/client";
 import socket from "../../cnn/ConnectWebSocket";
-// import { createRoot } from 'react-dom/client';
-import { useDispatch, useSelector } from 'react-redux';
-import CreateRoom from "../Functions/createRoom.js"
 
-
-let roomJoinName = null
 export default function Chats() {
-  const joinRoom = (e) => {
-    e.preventDefault();
-    const requestJoin = {
+  const [chatsInfo, setChatsInfo] = useState([]);
+
+  useEffect(() => {
+    const requestGetListRoom = {
       action: "onchat",
       data: {
-        event: "JOIN_ROOM",
-        data: {
-          name: roomJoinName,
-        },
+        event: "GET_USER_LIST",
       },
     };
-    console.log(roomJoinName)
-    if (roomJoinName !== null) {
-      socket.send(JSON.stringify(requestJoin));
-    }
+    socket.send(JSON.stringify(requestGetListRoom));
+    // socket.onmessage = (event) => {
+    //   const message = JSON.parse(event.data);
+    //   // setChatsInfo(message.data);
+    //   // console.log("mess chats: ", message);
+    //   if (message.event === "GET_USER_LIST") {
+    //     if (message.status === "success") {
+    //       setChatsInfo(message.data);
+    //       // console.log("type: ", message.data[0].type);
+    //       // console.log("messdata: ", chatsInfo);
+    //     } else {
+    //       console.log(message.error);
+    //     }
+    //   }
+    // };
 
-    socket.onmessage = (event) => {
+    const handleChatMessage = (event) => {
       const message = JSON.parse(event.data);
-
-      // response = message
-      // stored_data.push(message)
-      // console.log(stored_data)
-      // createRoom()
-      // const roomname = JSON.parse(event.data.data);
-      console.log("Nhận được tin nhắn từ server:", message);
-      // console.log("RESPONSE", response)
-      if (message.status === "success") {
-        console.log("Phòng chat đã được tạo thành công!");
-        console.log("Thông tin phòng chat:", message.data.name);
-        // roomChatName = message.data.name;
-        // setIsOpenPopup.bind(this, false);
+      if (message.event === "GET_USER_LIST" && message.status === "success") {
+        setChatsInfo(message.data);
       } else {
-        console.log("Không thể tạo phòng chat:", message.error);
-
+        console.log(message.error);
       }
     };
-  }
-  const scrollRef = useRef(null);
-  // const createRoom = (event) => {
-  //   event.preventDefault();
-  //   const socket = getWebSocket();
-  //   if (roomName === "" || roomName.split(" ").join("") === "") {
-  //     return Swal.fire({
-  //       text: "Please enter room name",
-  //       icon: 'warning',
-  //     })
-  //   }
 
-  //   for (let i = 0; i < stored_data.length; i++) {
-  //     if (countEven % 2 === 0) {
-  //       if (stored_data[i] !== stored_data[i + 1]) {
-  //         // temp = stored_data[i].name
-  //         roomJoinName = stored_data[i].data.name
-  //         data_room.push(
-  //           <div className="userChat">
-  //             <span className="name">{stored_data[i].data.name}</span>
-  //             <button onClick={joinRoom}><i class="fa-regular fa-arrow-right-to-bracket"></i></button>
-  //             <div className="numMess">
-  //               <span>{stored_data[i].data.chatData.length}</span>
-  //             </div>
-  //           </div>)
-  //         countEven++
-  //       }
-  //     }
-  //   }
-  //   console.log("sucessfully!")
-  //   console.log(roomJoinName)
-  // };
-  // if (numberOfRoom > 0) {
-  // createRoom()
-  // }
+    socket.addEventListener("message", handleChatMessage);
+
+    return () => {
+      socket.removeEventListener("message", handleChatMessage);
+    };
+  }, [chatsInfo]);
+
+  //
+
   return (
-    <CreateRoom scrollRef={scrollRef}></CreateRoom>
-    // <div></div>
+    <div className="chats">
+      {chatsInfo.map((value, index) => {
+        return (
+          <div key={index}>
+            <div className="userChat">
+              <span className="name">{value.name}</span>
+            </div>
+            ;
+          </div>
+        );
+      })}
+    </div>
   );
-
 }
-
-

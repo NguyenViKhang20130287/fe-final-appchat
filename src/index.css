@@ -780,7 +780,7 @@ select.input-error{
       }
       .chats {
         /* padding: 10px; */
-        /* overflow-y: scroll; */
+        overflow-y: auto;
         .userChat {
           display: flex;
           justify-content: space-between;
