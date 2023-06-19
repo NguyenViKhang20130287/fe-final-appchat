@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
 import socket from "../../cnn/ConnectWebSocket";
-import { useDispatch, useSelector } from 'react-redux';
-import Swal from 'sweetalert2'
-import { fetchListUser } from "../../app/thunk";
+import { useDispatch, useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import { fetchListUser } from "../../app/fetchData";
 // import { createRoom } from "./Api_handle.js";
-
-
 
 export default function CreateRoom({ setIsOpenPopup }) {
   const dispatch = useDispatch();
   const [roomName, setRoomName] = useState("");
-  const closePopup = document.getElementById("close_popup");
 
   const handleCreateRoom = (e) => {
     e.preventDefault();
@@ -24,7 +21,6 @@ export default function CreateRoom({ setIsOpenPopup }) {
       },
     };
 
-
     socket.send(JSON.stringify(request));
     // };
     socket.onmessage = (event) => {
@@ -33,21 +29,20 @@ export default function CreateRoom({ setIsOpenPopup }) {
 
       if (message.status === "success") {
         Swal.fire({
-          position: 'center',
-          icon: 'success',
-          title: 'Tạo phòng thành công.',
+          position: "center",
+          icon: "success",
+          title: "Tạo phòng thành công.",
           showConfirmButton: false,
-          timer: 1500
-        })
+          timer: 1500,
+        });
         setRoomName("");
-        dispatch(fetchListUser(socket))
+        dispatch(fetchListUser(socket));
       } else {
         Swal.fire({
-          icon: 'error',
-          title: 'Không thể tạo phòng!',
-          text: 'Phòng đã tồn tại.',
-
-        })
+          icon: "error",
+          title: "Không thể tạo phòng!",
+          text: "Phòng đã tồn tại.",
+        });
       }
     };
     // createRoom()
@@ -87,4 +82,3 @@ export default function CreateRoom({ setIsOpenPopup }) {
     </div>
   );
 }
-

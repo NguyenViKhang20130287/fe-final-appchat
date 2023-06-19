@@ -6,7 +6,7 @@ import {
   fetchMesPeople,
   fetchMesRoom,
   joinRoom,
-} from "../../app/thunk";
+} from "../../app/fetchData";
 import Swal from "sweetalert2";
 import socket from "../../cnn/ConnectWebSocket";
 
