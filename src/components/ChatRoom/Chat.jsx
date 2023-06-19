@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { FaPhone, FaVideo, FaArrowCircleRight } from "react-icons/fa";
 import { FaPaperPlane, FaFile, FaRegSmile } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import socket from "../../cnn/ConnectWebSocket";
 import AVATAR from "../../images/avatar.png";
 import { usernameLogin } from "../Login/Login_content";
 import { checkUser } from "./Search";
+import Swal from "sweetalert2";
 // import Message from "./Message";
 // import { valueSearch } from "./Search";
 // import { checkUser } from "./Search";
@@ -13,12 +14,7 @@ import { checkUser } from "./Search";
 export default function Chat() {
   const [roomName, setRoomName] = useState("");
   const [messagesInfo, setMessagesInfo] = useState([]);
-  const [messageOwner, setMessageOwner] = useState([]);
-  const [messageOther, setMessageOther] = useState([]);
-  const [checkU, setIsCheckU] = useState(false);
-  const [username, setUsername] = useState("");
   const [message, setMessage] = useState("");
-  const [nameOwner, setNameOwner] = useState("");
   const navigate = useNavigate();
 
   const signout = () => {
@@ -38,109 +34,109 @@ export default function Chat() {
 
     // socket.onopen = () => {
     // console.log("WebSocket connection established");
+    Swal.fire({
+      title: "Bạn có muốn đăng xuất khỏi ChatRapid?",
+      showCancelButton: true,
+      confirmButtonText: "Đồng ý",
+      cancelButtonText: "Hủy",
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        socket.send(JSON.stringify(payload));
+        // };
 
-    socket.send(JSON.stringify(payload));
-    // };
+        socket.onmessage = (event) => {
+          console.log("Received message:", event.data);
+          //check error status
+        };
 
-    socket.onmessage = (event) => {
-      console.log("Received message:", event.data);
-      //check error status
-    };
-
-    // socket.onclose = () => {
-    //   console.log("WebSocket connection closed");
-    // };
-    // }
-    navigate("/signout");
+        socket.onclose = () => {
+          console.log("WebSocket connection closed");
+        };
+        // }
+        navigate("/signout");
+        Swal.fire("Đăng xuất thành công!", "", "success");
+      }
+    });
   };
 
   //
-  const checkUer = (username) => {
-    setIsCheckU(username !== usernameLogin);
-    // console.log("checku: ", checkU);
+  const checkUserName = (username) => {
+    return username !== usernameLogin;
+  };
+
+  //
+  //
+  const handleSendMessToRoom = (e) => {
+    e.preventDefault();
+    console.log("oke");
+    const requestSendMessToRoom = {
+      action: "onchat",
+      data: {
+        event: "SEND_CHAT",
+        data: {
+          type: "room",
+          to: roomName,
+          mes: message,
+        },
+      },
+    };
+
+    socket.send(JSON.stringify(requestSendMessToRoom));
+    setMessage("");
+    getMess();
   };
   // checkUer("nguyenvikhang");
   useEffect(() => {
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
       console.log("Nhận được tin nhắn từ server Chat:", message);
+      //
       if (message.event === "JOIN_ROOM") {
         if (message.status === "success") {
           setRoomName(message.data.name);
-          // const nameOwner = message.data.chatData[].name
-          // const newMessOwner = message.data.chatData[0].mes;
-          // console.log("new mess: ", newMessOwner);
           setMessagesInfo(message.data.chatData.reverse());
-          // setMessagesInfo(messagesInfo.reverse());
-          // console.log("messInfo: ", messagesInfo.reverse());
-          // setMessagesInfo(messagesInfo.reverse())
-
-          // //
-          // setMessageOwner(
-          //   messagesInfo.filter((item) => item.name === usernameLogin)
-          // );
-          // setMessageOwner(messageOwner.reverse());
-          // console.log("MessOwner: ", messageOwner);
-
-          // //
-          // setMessageOther(
-          //   messagesInfo.filter((item) => item.name !== usernameLogin)
-          // );
-          // setMessageOwner(messageOther.reverse());
-          // console.log("MessOther: ", messageOther);
-
-          // console.log("JOINROOM: ", message.data.chatData);
+          // console.log(messagesInfo);
         } else {
+          console.log(message.error);
         }
       }
+      //
       if (message.event === "CHECK_USER") {
         if (message.status === "success") {
           console.log("CHECKUSER: ", message);
         }
       }
+
+      //
     };
-  });
-  //
-  // useEffect(() => {
-  //   socket.onmessage = (event) => {
-  //     const message = JSON.parse(event.data);
-  //     console.log("Nhận được tin nhắn từ server Chat:", message);
+  }, []);
+  useEffect(() => {
+    scrollEnd();
+  }, [messagesInfo]);
+  const scrollRef = useRef(null);
+  const scrollEnd = () => {
+    scrollRef.current.scrollTop =
+      scrollRef.current.scrollHeight - scrollRef.current.clientHeight;
+  };
+  const getMess = () => {
+    const request = {
+      action: "onchat",
+      data: {
+        event: "JOIN_ROOM",
+        data: {
+          name: roomName,
+        },
+      },
+    };
+    socket.send(JSON.stringify(request));
+    socket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
 
-  //     if (message.event === "JOIN_ROOM") {
-  //       if (message.status === "success") {
-  //         console.log("check", message.data.name);
-  //         setRoomName(message.data.name);
-  //       } else {
-  //         // checkUser();
-  //         console.log("Join mess", message.mes);
-  //         console.log("valueSearch Chat: ", valueSearch);
-  //         setUsername(valueSearch);
-  //         console.log("uname Chat: ", username);
-  //         const requestCheckUser = {
-  //           action: "onchat",
-  //           data: {
-  //             event: "CHECK_USER",
-  //             data: {
-  //               user: username,
-  //             },
-  //           },
-  //         };
-  //         socket.send(JSON.stringify(requestCheckUser));
-  //         socket.onmessage = (event) => {
-  //           const messageCheckU = JSON.parse(event.data);
-  //           if (messageCheckU.event === "CHECK_USER") {
-  //             console.log(
-  //               "Nhận được tin nhắn từ server CheckU:",
-  //               messageCheckU
-  //             );
-  //           }
-  //         };
-  //         // console.log("cant find room", message.status);
-  //       }
-  //     }
-  //   };
-  // });
-
+      // const message = JSON.parse(event.data);
+      setMessagesInfo(message.data.chatData.reverse());
+    };
+  };
   return (
     <div className="chat">
       <div className="chatInfo">
@@ -176,77 +172,81 @@ export default function Chat() {
           />
         </div>
       </div>
-      <div className="messages">
-        {messagesInfo.map((value, index) => (
-          <div key={index}>
-            <div className="message owner">
-              <div className="mainMess">
-                <div className="messageInfo">
-                  <div className="avatar">
-                    <img
-                      src={AVATAR}
-                      alt=""
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
+      <div className="messages" ref={scrollRef}>
+        {messagesInfo.map((value, index) => {
+          return (
+            <div key={index}>
+              {value.name === usernameLogin ? (
+                <div className="message owner">
+                  <div className="mainMess">
+                    <div className="messageInfo">
+                      <div className="avatar">
+                        <img
+                          src={AVATAR}
+                          alt=""
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="messageContent">
+                      <div className="content">
+                        <p>{value.mes}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="nameAndTime"
+                    style={{
+                      fontSize: "12px",
+                      display: "flex",
+                      flexDirection: "row-reverse",
+                    }}
+                  >
+                    <span className="time" style={{}}>
+                      {value.createAt}
+                    </span>
+                    <span> - </span>
+                    <span className="name">{value.name}</span>
                   </div>
                 </div>
-                <div className="messageContent">
-                  <div className="content">
-                    <p>{value.mes}</p>
+              ) : (
+                <div className="message">
+                  <div className="mainMess">
+                    <div className="messageInfo">
+                      <div className="avatar">
+                        <img
+                          src={AVATAR}
+                          alt=""
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="messageContent">
+                      <div className="content">
+                        <p>{value.mes}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="nameAndTime" style={{ fontSize: "12px" }}>
+                    <span className="name">{value.name}</span>
+                    <span> - </span>
+                    <span className="time" style={{}}>
+                      {value.createAt}
+                    </span>
                   </div>
                 </div>
-              </div>
-              <div
-                className="nameAndTime"
-                style={{
-                  fontSize: "12px",
-                  display: "flex",
-                  flexDirection: "row-reverse",
-                }}
-              >
-                <span className="name">{value.name}</span>
-                <span> - </span>
-                <span className="time" style={{}}>
-                  {value.createAt}
-                </span>
-              </div>
+              )}
             </div>
-            {/*  */}
-            <div className="message">
-              <div className="mainMess">
-                <div className="messageInfo">
-                  <div className="avatar">
-                    <img
-                      src={AVATAR}
-                      alt=""
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="messageContent">
-                  <div className="content">
-                    <p>aasd</p>
-                  </div>
-                </div>
-              </div>
-              <div className="nameAndTime" style={{ fontSize: "12px" }}>
-                <span className="name">nguyenvikhang</span>
-                <span> - </span>
-                <span className="time" style={{}}>
-                  01/01/2023, 12:00 AM
-                </span>
-              </div>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="inputMess">
@@ -266,9 +266,11 @@ export default function Chat() {
             className="yourMess"
             type="text"
             placeholder="Nhập tin nhắn..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value.trim())}
           />
           {/* </div> */}
-          <button className="send">
+          <button className="send" onClick={handleSendMessToRoom}>
             <FaPaperPlane />
           </button>
         </div>
