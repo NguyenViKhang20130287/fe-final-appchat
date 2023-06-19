@@ -59,16 +59,17 @@ const Search = () => {
       };
       socket.send(JSON.stringify(request));
     } else {
-      const requestCheckUser = {
+      const request = {
         action: "onchat",
         data: {
-          event: "CHECK_USER",
+          event: "GET_PEOPLE_CHAT_MES",
           data: {
-            user: roomName,
+            name: roomName,
+            page: 1,
           },
         },
       };
-      socket.send(JSON.stringify(requestCheckUser));
+      socket.send(JSON.stringify(request));
     }
 
     valueSearch = roomName;
